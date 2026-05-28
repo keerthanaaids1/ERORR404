@@ -106,4 +106,4 @@ Open `http://localhost:5173` in your browser to access the app.
   - Raksha
   - Hanshika
   - Ananya
-- **GitHub Repository**: [ERORR404](https://github.com/keerthanaaids1/ERORR404)
+- **GitHub Repository**: [(https://github.com/keerthanaaids1/ERORR404)
