@@ -23,6 +23,3 @@ build/
 # Local configuration & temp files
 .DS_Store
 Thumbs.db
-chat_response.json
-test_chat.py
-test_server_stream.py
