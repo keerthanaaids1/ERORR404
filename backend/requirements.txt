@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+crewai
+crewai-tools
+groq
+python-dotenv
+langchain-groq
+pydantic
+pydantic-settings
+requests

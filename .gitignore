@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+backend/venv/
+
+# Environment files (MUST NEVER BE COMMITTED TO PUBLIC REPOS)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Production builds
+dist/
+build/
+
+# Local configuration & temp files
+.DS_Store
+Thumbs.db
+chat_response.json
+test_chat.py
+test_server_stream.py
