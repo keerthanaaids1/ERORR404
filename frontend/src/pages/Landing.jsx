@@ -26,8 +26,8 @@ const features = [
 
 const ChartTooltip = ({ active, payload }) => {
   if (active && payload?.length) return (
-    <div className="bg-white border border-[#E6E2DA] rounded-2xl p-3 shadow-soft">
-      <p className="text-xs font-serif font-bold text-[#2D3A31]">Age {payload[0].payload.age}</p>
+    <div className="bg-white dark:bg-[#18231C] border border-[#E6E2DA] dark:border-[#24352B] rounded-2xl p-3 shadow-soft">
+      <p className="text-xs font-serif font-bold text-[#2D3A31] dark:text-white">Age {payload[0].payload.age}</p>
       <p className="text-sm font-bold text-[#8C9A84]">₹{payload[0].value}L</p>
     </div>
   );
@@ -48,19 +48,19 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F9F8F4]">
+    <div className="min-h-screen bg-[#F9F8F4] dark:bg-[#0F1712] text-[#2D3A31] dark:text-[#F0F5F2] transition-colors duration-300">
       <Navbar />
 
       {/* ── HERO ── */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 pt-20 pb-32 flex flex-col lg:flex-row items-center gap-16">
         <div className="flex-1 text-center lg:text-left">
           <span className="section-label mb-6 block">Personalized Financial Planning</span>
-          <h1 className="font-serif text-5xl md:text-7xl font-bold text-[#2D3A31] leading-tight mb-6">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold text-[#2D3A31] dark:text-white leading-tight mb-6 transition-colors">
             Your Money.<br />
             Your <span className="italic text-[#8C9A84]">Retirement.</span><br />
             Your Rules.
           </h1>
-          <p className="text-[#8C9A84] text-lg leading-relaxed max-w-xl mb-10">
+          <p className="text-[#8C9A84] text-lg leading-relaxed max-w-xl mb-10 animate-fade-in">
             Tell us your income and goals. Our 4 AI agents build a personalized roadmap to financial freedom — in seconds, in plain English.
           </p>
           {user && (
@@ -74,23 +74,21 @@ export default function Landing() {
             </button>
             <a href="#how-it-works" className="btn-secondary">See How It Works</a>
           </div>
-
-
         </div>
 
         {/* Swarm Agent Network - Describes and visualizes the agents */}
         <div className="flex-1 flex justify-center w-full">
-          <div className="bg-white border border-[#E6E2DA] rounded-3xl p-6 shadow-large w-full max-w-md relative overflow-hidden">
+          <div className="bg-white dark:bg-[#18231C] border border-[#E6E2DA] dark:border-[#24352B] rounded-3xl p-6 shadow-large w-full max-w-md relative overflow-hidden transition-colors">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#8C9A84] opacity-[0.08] blur-[40px] rounded-full pointer-events-none" />
             
-            <div className="flex items-center justify-between pb-4 border-b border-[#E6E2DA] mb-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[#E6E2DA] dark:border-[#24352B] mb-6">
               <div>
-                <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest font-sans flex items-center gap-1.5 animate-pulse">
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-widest font-sans flex items-center gap-1.5 animate-pulse">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" /> CrewAI Crew Online
                 </span>
-                <h3 className="font-serif text-lg font-bold text-[#2D3A31] mt-0.5">4 AI Agents Cooperating</h3>
+                <h3 className="font-serif text-lg font-bold text-[#2D3A31] dark:text-white mt-0.5 transition-colors">4 AI Agents Cooperating</h3>
               </div>
-              <span className="text-[10px] bg-[#2D3A31] text-white px-2.5 py-1 rounded-full font-semibold">Active Crew</span>
+              <span className="text-[10px] bg-[#2D3A31] dark:bg-[#8C9A84] text-white dark:text-[#0F1712] px-2.5 py-1 rounded-full font-semibold transition-colors">Active Crew</span>
             </div>
 
             <div className="flex flex-col gap-6 relative">
@@ -108,13 +106,13 @@ export default function Landing() {
                        style={{ backgroundColor: agent.color, color: i === 2 ? '#2D3A31' : 'white' }}>
                     0{i+1}
                   </div>
-                  <div className="flex-1 bg-[#F9F8F4] border border-[#E6E2DA] p-3.5 rounded-2xl">
+                  <div className="flex-1 bg-[#F9F8F4] dark:bg-[#121C16] border border-[#E6E2DA] dark:border-[#24352B] p-3.5 rounded-2xl transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-serif font-bold text-sm text-[#2D3A31]">{agent.name}</h4>
+                      <h4 className="font-serif font-bold text-sm text-[#2D3A31] dark:text-white transition-colors">{agent.name}</h4>
                       <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#8C9A84]">{agent.role}</span>
                     </div>
                     <p className="text-xs text-[#8C9A84] leading-relaxed mb-1.5">{agent.desc}</p>
-                    <span className="text-[10px] text-[#2D3A31] font-semibold font-mono bg-white border border-[#E6E2DA] px-2 py-0.5 rounded-md inline-block">
+                    <span className="text-[10px] text-[#2D3A31] dark:text-[#F0F5F2] font-semibold font-mono bg-white dark:bg-[#18231C] border border-[#E6E2DA] dark:border-[#24352B] px-2 py-0.5 rounded-md inline-block transition-colors">
                       ⚙️ {agent.details}
                     </span>
                   </div>
@@ -126,11 +124,11 @@ export default function Landing() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="bg-white py-32 px-6 md:px-12">
+      <section id="how-it-works" className="bg-white dark:bg-[#18231C] py-32 px-6 md:px-12 border-y border-[#E6E2DA] dark:border-[#24352B] transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <span className="section-label mb-3 block">The Workflow</span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3A31]">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3A31] dark:text-white transition-colors">
               Four AI Agents.<br /><span className="italic text-[#8C9A84]">One Perfect Plan.</span>
             </h2>
           </div>
@@ -140,13 +138,13 @@ export default function Landing() {
               return (
                 <div key={i} className={`card-botanical p-7 ${i % 2 === 1 ? 'md:translate-y-8' : ''}`}>
                   <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-full bg-[#F2F0EB] flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-[#F2F0EB] dark:bg-[#121C16] flex items-center justify-center transition-colors">
                       <Icon className="w-5 h-5 text-[#8C9A84]" strokeWidth={1.5} />
                     </div>
-                    <span className="font-serif text-3xl font-bold text-[#E6E2DA]">{a.num}</span>
+                    <span className="font-serif text-3xl font-bold text-[#E6E2DA] dark:text-[#24352B] transition-colors">{a.num}</span>
                   </div>
                   <span className="section-label">{a.role}</span>
-                  <h3 className="font-serif text-xl font-bold text-[#2D3A31] mt-2 mb-3">{a.name}</h3>
+                  <h3 className="font-serif text-xl font-bold text-[#2D3A31] dark:text-white mt-2 mb-3 transition-colors">{a.name}</h3>
                   <p className="text-sm text-[#8C9A84] leading-relaxed">{a.desc}</p>
                 </div>
               );
@@ -156,17 +154,17 @@ export default function Landing() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" className="py-32 px-6 md:px-12 bg-[#F9F8F4]">
+      <section id="features" className="py-32 px-6 md:px-12 bg-[#F9F8F4] dark:bg-[#0F1712] transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
             <div>
               <span className="section-label mb-4 block">Why WealthPath</span>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3A31] leading-tight">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3A31] dark:text-white leading-tight transition-colors">
                 Not Generic Advice.<br />
                 <span className="italic text-[#8C9A84]">Your</span> Advice.
               </h2>
             </div>
-            <div className="bg-white rounded-3xl p-8 shadow-large border border-[#E6E2DA]">
+            <div className="bg-white dark:bg-[#18231C] rounded-3xl p-8 shadow-large border border-[#E6E2DA] dark:border-[#24352B] transition-colors">
               <p className="section-label mb-3">Wealth Growth Trajectory</p>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -191,11 +189,11 @@ export default function Landing() {
               const Icon = f.icon;
               return (
                 <div key={i} className="card-botanical p-8 flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-full bg-[#F2F0EB] flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#F2F0EB] dark:bg-[#121C16] flex items-center justify-center flex-shrink-0 transition-colors">
                     <Icon className="w-5 h-5 text-[#8C9A84]" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h4 className="font-serif text-xl font-bold text-[#2D3A31] mb-2">{f.title}</h4>
+                    <h4 className="font-serif text-xl font-bold text-[#2D3A31] dark:text-white mb-2 transition-colors">{f.title}</h4>
                     <p className="text-sm text-[#8C9A84] leading-relaxed">{f.desc}</p>
                   </div>
                 </div>
@@ -206,7 +204,7 @@ export default function Landing() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-[#2D3A31] py-32 px-6 md:px-12">
+      <section className="bg-[#2D3A31] dark:bg-[#18231C] py-32 px-6 md:px-12 border-t border-transparent dark:border-[#24352B] transition-colors duration-300">
         <div className="max-w-3xl mx-auto text-center">
           <Leaf className="w-10 h-10 text-[#8C9A84] mx-auto mb-6" strokeWidth={1.5} />
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
@@ -216,20 +214,20 @@ export default function Landing() {
             It takes 2 minutes. Your 4 AI agents do the rest.
           </p>
           <button onClick={() => navigate('/onboard')}
-            className="inline-flex items-center gap-2 bg-[#8C9A84] text-white text-sm tracking-widest uppercase rounded-full px-10 py-4 font-medium hover:bg-[#C27B66] transition-all duration-300 shadow-xl">
+            className="inline-flex items-center gap-2 bg-[#8C9A84] text-white dark:text-[#0F1712] text-sm tracking-widest uppercase rounded-full px-10 py-4 font-medium hover:bg-[#C27B66] hover:text-white transition-all duration-300 shadow-xl cursor-pointer">
             Build My Roadmap <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="bg-[#F9F8F4] border-t border-[#E6E2DA] py-12 px-6 md:px-12">
+      <footer className="bg-[#F9F8F4] dark:bg-[#0F1712] border-t border-[#E6E2DA] dark:border-[#24352B] py-12 px-6 md:px-12 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#2D3A31] flex items-center justify-center">
-              <Leaf className="w-3.5 h-3.5 text-white" strokeWidth={1.5} />
+            <div className="w-7 h-7 rounded-full bg-[#2D3A31] dark:bg-[#8C9A84] flex items-center justify-center transition-colors">
+              <Leaf className="w-3.5 h-3.5 text-white dark:text-[#0F1712]" strokeWidth={1.5} />
             </div>
-            <span className="font-serif font-bold text-[#2D3A31]">WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
+            <span className="font-serif font-bold text-[#2D3A31] dark:text-white transition-colors">WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
           </div>
           <p className="text-xs text-[#8C9A84]">Built at Agentathon 2026 · Powered by CrewAI + Groq</p>
         </div>

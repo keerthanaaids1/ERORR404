@@ -172,16 +172,16 @@ export default function Processing({ formData, setRoadmapData }) {
   }, [formData, navigate, setRoadmapData]);
 
   return (
-    <div className="min-h-screen bg-[#F9F8F4] flex flex-col items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#F9F8F4] dark:bg-[#0F1712] text-[#2D3A31] dark:text-[#F0F5F2] flex flex-col items-center justify-center px-6 py-12 transition-colors duration-300">
       {/* Soft organic background blob */}
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#8C9A84] opacity-[0.06] blur-[120px] pointer-events-none" />
 
-      <div className="w-8 h-8 rounded-full bg-[#2D3A31] flex items-center justify-center mb-8">
-        <Leaf className="w-4 h-4 text-white" strokeWidth={1.5} />
+      <div className="w-8 h-8 rounded-full bg-[#2D3A31] dark:bg-[#8C9A84] flex items-center justify-center mb-8 transition-colors">
+        <Leaf className="w-4 h-4 text-white dark:text-[#0F1712]" strokeWidth={1.5} />
       </div>
 
       <div className="text-center mb-10">
-        <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3A31] mb-3">
+        <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#2D3A31] dark:text-white mb-3 transition-colors">
           Your AI Team is Working...
         </h1>
         <p className="text-sm text-[#8C9A84] font-sans">

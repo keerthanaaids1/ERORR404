@@ -7,6 +7,16 @@ export default function Onboard({ formData, setFormData }) {
   const [step, setStep] = useState(1);
   const [healthScore, setHealthScore] = useState(0);
 
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('wealthpath_theme') === 'dark');
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -40,17 +50,17 @@ export default function Onboard({ formData, setFormData }) {
   const scoreColor = healthScore >= 70 ? '#8C9A84' : healthScore >= 40 ? '#C27B66' : '#DCCFC2';
 
   return (
-    <div className="min-h-screen bg-[#F9F8F4] flex flex-col">
+    <div className="min-h-screen bg-[#F9F8F4] dark:bg-[#0F1712] text-[#2D3A31] dark:text-[#F0F5F2] flex flex-col transition-colors duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#E6E2DA]">
+      <div className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#E6E2DA] dark:border-[#24352B] transition-colors">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 rounded-full bg-[#2D3A31] flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-white" strokeWidth={1.5} />
+            <div className="w-8 h-8 rounded-full bg-[#2D3A31] dark:bg-[#8C9A84] flex items-center justify-center transition-colors">
+              <Leaf className="w-4 h-4 text-white dark:text-[#0F1712]" strokeWidth={1.5} />
             </div>
-            <span className="font-serif font-bold text-[#2D3A31]">WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
+            <span className="font-serif font-bold text-[#2D3A31] dark:text-white transition-colors">WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
           </div>
-          <button onClick={() => navigate('/')} className="hidden sm:flex items-center gap-1.5 text-xs text-[#8C9A84] hover:text-[#2D3A31] border border-[#E6E2DA] hover:border-[#8C9A84] px-3.5 py-1.5 rounded-full transition-all shadow-sm">
+          <button onClick={() => navigate('/')} className="hidden sm:flex items-center gap-1.5 text-xs text-[#8C9A84] hover:text-[#2D3A31] dark:hover:text-white border border-[#E6E2DA] dark:border-[#24352B] hover:border-[#8C9A84] px-3.5 py-1.5 rounded-full transition-all shadow-sm">
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
           </button>
         </div>
@@ -58,15 +68,15 @@ export default function Onboard({ formData, setFormData }) {
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 bg-[#E6E2DA]">
+      <div className="h-1 bg-[#E6E2DA] dark:bg-[#24352B]">
         <div className="h-full bg-[#8C9A84] transition-all duration-500" style={{ width: step === 1 ? '50%' : '100%' }} />
       </div>
 
       <div className="flex-1 max-w-5xl w-full mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
 
         {/* Form */}
-        <div className="lg:col-span-3 bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8">
-          <h2 className="font-serif text-3xl font-bold text-[#2D3A31] mb-1">
+        <div className="lg:col-span-3 bg-white dark:bg-[#18231C] rounded-3xl border border-[#E6E2DA] dark:border-[#24352B] shadow-soft p-8 transition-colors">
+          <h2 className="font-serif text-3xl font-bold text-[#2D3A31] dark:text-white mb-1 transition-colors">
             {step === 1 ? 'Your Financial Picture' : 'Set Your Goals'}
           </h2>
           <p className="text-sm text-[#8C9A84] mb-8">
@@ -151,7 +161,7 @@ export default function Onboard({ formData, setFormData }) {
                   </div>
                   <input type="range" name="retirement_age" min="35" max="65" value={formData.retirement_age || 55}
                     onChange={handleChange}
-                    className="w-full h-1 bg-[#E6E2DA] rounded-full appearance-none cursor-pointer accent-[#8C9A84]" />
+                    className="w-full h-1 bg-[#E6E2DA] dark:bg-[#24352B] rounded-full appearance-none cursor-pointer accent-[#8C9A84]" />
                   <div className="flex justify-between text-xs text-[#8C9A84] mt-1 font-sans">
                     <span>35</span><span>65</span>
                   </div>
@@ -164,8 +174,8 @@ export default function Onboard({ formData, setFormData }) {
                       <div key={r} onClick={() => setFormData(p => ({ ...p, risk: r }))}
                         className={`rounded-2xl p-4 text-center cursor-pointer border transition-all duration-300 ${
                           formData.risk === r
-                            ? 'bg-[#2D3A31] border-[#2D3A31] text-white shadow-med'
-                            : 'bg-[#F2F0EB] border-[#E6E2DA] text-[#8C9A84] hover:border-[#8C9A84]'
+                            ? 'bg-[#2D3A31] dark:bg-[#8C9A84] border-[#2D3A31] dark:border-[#8C9A84] text-white dark:text-[#0F1712] shadow-med'
+                            : 'bg-[#F2F0EB] dark:bg-[#121C16] border-[#E6E2DA] dark:border-[#24352B] text-[#8C9A84] hover:border-[#8C9A84]'
                         }`}>
                         <span className="text-xs font-semibold font-sans">{r}</span>
                       </div>
@@ -187,8 +197,8 @@ export default function Onboard({ formData, setFormData }) {
                       return (
                         <div key={goal} onClick={() => toggleGoal(goal)}
                           className={`px-4 py-2 rounded-full border text-xs font-medium cursor-pointer select-none transition-all duration-300 flex items-center gap-1.5 ${
-                            sel ? 'bg-[#2D3A31] border-[#2D3A31] text-white shadow-soft'
-                                : 'bg-white border-[#E6E2DA] text-[#8C9A84] hover:border-[#8C9A84]'
+                            sel ? 'bg-[#2D3A31] dark:bg-[#8C9A84] border-[#2D3A31] dark:border-[#8C9A84] text-white dark:text-[#0F1712] shadow-soft'
+                                : 'bg-white dark:bg-[#18231C] border-[#E6E2DA] dark:border-[#24352B] text-[#8C9A84] hover:border-[#8C9A84]'
                           }`}>
                           {sel && <Check className="w-3.5 h-3.5" />} {goal}
                         </div>
@@ -201,11 +211,11 @@ export default function Onboard({ formData, setFormData }) {
 
             {/* Agent preview on step 2 */}
             {step === 2 && (
-              <div className="bg-[#F2F0EB] rounded-2xl p-5 mt-2">
+              <div className="bg-[#F2F0EB] dark:bg-[#121C16] rounded-2xl p-5 mt-2 transition-colors">
                 <p className="section-label mb-3">Upon submission, 4 agents will run:</p>
                 <ul className="flex flex-col gap-2">
                   {['ProfileAgent — financial health analysis', 'GoalAgent — retirement math', 'InvestmentAgent — live market research', 'CoachAgent — plain English roadmap'].map((a, i) => (
-                    <li key={i} className="flex items-center gap-2 text-xs text-[#2D3A31] font-sans">
+                    <li key={i} className="flex items-center gap-2 text-xs text-[#2D3A31] dark:text-white font-sans transition-colors">
                       <div className="w-5 h-5 rounded-full bg-[#8C9A84]/20 text-[#8C9A84] flex items-center justify-center text-[10px] font-bold">{i+1}</div>
                       {a}
                     </li>
@@ -214,10 +224,10 @@ export default function Onboard({ formData, setFormData }) {
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#E6E2DA] mt-2">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E6E2DA] dark:border-[#24352B] mt-2 transition-colors">
               {step === 2 ? (
                 <button type="button" onClick={() => setStep(1)}
-                  className="flex items-center gap-2 text-sm text-[#8C9A84] hover:text-[#2D3A31] transition-colors">
+                  className="flex items-center gap-2 text-sm text-[#8C9A84] hover:text-[#2D3A31] dark:hover:text-white transition-colors">
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
               ) : <div />}
@@ -230,11 +240,11 @@ export default function Onboard({ formData, setFormData }) {
 
         {/* Health Score Panel */}
         <div className="lg:col-span-2 flex flex-col gap-5">
-          <div className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 flex flex-col items-center text-center">
+          <div className="bg-white dark:bg-[#18231C] border border-[#E6E2DA] dark:border-[#24352B] shadow-soft p-8 flex flex-col items-center text-center transition-colors">
             <span className="section-label mb-5">Real-Time Analysis</span>
             <div className="relative w-36 h-36 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r={radius} fill="transparent" stroke="#E6E2DA" strokeWidth="8" />
+                <circle cx="60" cy="60" r={radius} fill="transparent" stroke={isDarkMode ? '#24352B' : '#E6E2DA'} strokeWidth="8" />
                 <circle cx="60" cy="60" r={radius} fill="transparent" stroke={scoreColor}
                   strokeWidth="8" strokeLinecap="round"
                   strokeDasharray={circumference}
@@ -242,17 +252,17 @@ export default function Onboard({ formData, setFormData }) {
                   className="transition-all duration-700" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-serif text-3xl font-bold text-[#2D3A31]">{healthScore}</span>
+                <span className="font-serif text-3xl font-bold text-[#2D3A31] dark:text-white transition-colors">{healthScore}</span>
                 <span className="text-xs text-[#8C9A84] uppercase tracking-widest font-sans">Score</span>
               </div>
             </div>
-            <h3 className="font-serif text-lg font-bold text-[#2D3A31] mt-5">Financial Health Score</h3>
+            <h3 className="font-serif text-lg font-bold text-[#2D3A31] dark:text-white mt-5 transition-colors">Financial Health Score</h3>
             <p className="text-xs text-[#8C9A84] mt-2 leading-relaxed px-2">
               Live score based on your savings rate and debt-to-income ratio.
             </p>
           </div>
 
-          <div className="bg-[#2D3A31] rounded-3xl p-6 flex items-start gap-3">
+          <div className="bg-[#2D3A31] dark:bg-[#18231C] border border-transparent dark:border-[#24352B] rounded-3xl p-6 flex items-start gap-3 transition-colors">
             <Shield className="w-5 h-5 text-[#8C9A84] flex-shrink-0 mt-0.5" strokeWidth={1.5} />
             <p className="text-xs text-[#8C9A84] leading-relaxed">
               Your data is only used to generate your roadmap and is never stored permanently on our servers.
@@ -261,7 +271,7 @@ export default function Onboard({ formData, setFormData }) {
         </div>
       </div>
 
-      <footer className="text-center py-5 text-xs text-[#8C9A84] border-t border-[#E6E2DA]">
+      <footer className="text-center py-5 text-xs text-[#8C9A84] border-t border-[#E6E2DA] dark:border-[#24352B] transition-colors">
         WealthPath AI · Built at Agentathon 2026
       </footer>
     </div>

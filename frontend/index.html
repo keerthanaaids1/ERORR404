@@ -6,8 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WealthPath AI - Personalized Early Retirement Planner</title>
     <meta name="description" content="Calculate and build your personalized early retirement roadmap in India. Run a sequence of 4 AI agents to plan your SIP, emergency fund, and asset allocations." />
+    <script>
+      (function() {
+        const theme = localStorage.getItem('wealthpath_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-[#050506] text-[#EDEDEF]">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

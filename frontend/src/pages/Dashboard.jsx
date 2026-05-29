@@ -22,6 +22,27 @@ export default function Dashboard() {
   const [allocationMode, setAllocationMode] = useState('split');
   const [skipLowReturn, setSkipLowReturn] = useState(false);
 
+  // Dark Mode State
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('wealthpath_theme') === 'dark');
+
+  const toggleTheme = () => {
+    setDarkMode(prev => {
+      const next = !prev;
+      localStorage.setItem('wealthpath_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   useEffect(() => {
     const r = localStorage.getItem('wealthpath_roadmap');
     const p = localStorage.getItem('wealthpath_profile');
@@ -31,7 +52,7 @@ export default function Dashboard() {
   }, [navigate]);
 
   if (!roadmap) return (
-    <div className="min-h-screen bg-[#F9F8F4] flex items-center justify-center">
+    <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-[#0F1712]' : 'bg-[#F9F8F4]'}`}>
       <div className="w-8 h-8 border-2 border-[#8C9A84] border-t-transparent rounded-full animate-spin" />
     </div>
   );
@@ -355,7 +376,7 @@ export default function Dashboard() {
     : baseInvestments;
 
   return (
-    <div className="min-h-screen bg-[#F9F8F4] text-[#2D3A31] pb-24 print:bg-white relative">
+    <div className={`min-h-screen pb-24 print:bg-white relative transition-colors duration-300 ${darkMode ? 'bg-[#0F1712] text-[#F0F5F2]' : 'bg-[#F9F8F4] text-[#2D3A31]'}`}>
 
       {/* Soft background blob */}
       <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[#8C9A84] opacity-[0.05] blur-[120px] rounded-full pointer-events-none -z-10" />
@@ -363,21 +384,38 @@ export default function Dashboard() {
       <div className="max-w-6xl mx-auto px-6 md:px-10 py-10">
 
         {/* ── HEADER ── */}
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-[#E6E2DA] pb-8 mb-12">
+        <header className={`flex flex-col md:flex-row md:items-end justify-between gap-5 border-b pb-8 mb-12 ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
           <div>
             <div className="flex items-center gap-2 mb-3 cursor-pointer" onClick={() => navigate('/')}>
-              <span className="font-serif font-bold text-[#2D3A31]">WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
+              <span className={`font-serif font-bold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>WealthPath <span className="italic text-[#8C9A84]">AI</span></span>
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#2D3A31] leading-tight">Your WealthPath Roadmap</h1>
+            <h1 className={`font-serif text-4xl md:text-5xl font-bold leading-tight ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>Your WealthPath Roadmap</h1>
           </div>
           <div className="flex items-center gap-3 print:hidden">
             <button onClick={() => navigate('/')}
-              className="flex items-center gap-2 bg-white border border-[#E6E2DA] text-[#2D3A31] px-5 py-2.5 rounded-full text-sm hover:border-[#8C9A84] transition-all shadow-soft">
+              className={`flex items-center gap-2 border px-5 py-2.5 rounded-full text-sm transition-all shadow-soft ${
+                darkMode 
+                  ? 'bg-[#18231C] border-[#24352B] text-[#F0F5F2] hover:border-[#8C9A84]' 
+                  : 'bg-white border-[#E6E2DA] text-[#2D3A31] hover:border-[#8C9A84]'
+              }`}>
               <ArrowLeft className="w-4 h-4" /> Back to Home
             </button>
             <button onClick={() => navigate('/onboard')}
-              className="flex items-center gap-2 bg-white border border-[#E6E2DA] text-[#2D3A31] px-5 py-2.5 rounded-full text-sm hover:border-[#8C9A84] transition-all shadow-soft">
+              className={`flex items-center gap-2 border px-5 py-2.5 rounded-full text-sm transition-all shadow-soft ${
+                darkMode 
+                  ? 'bg-[#18231C] border-[#24352B] text-[#F0F5F2] hover:border-[#8C9A84]' 
+                  : 'bg-white border-[#E6E2DA] text-[#2D3A31] hover:border-[#8C9A84]'
+              }`}>
               <Edit3 className="w-4 h-4" /> Edit Profile
+            </button>
+            <button onClick={toggleTheme}
+              className={`flex items-center justify-center w-10 h-10 border rounded-full transition-all shadow-soft ${
+                darkMode 
+                  ? 'bg-[#18231C] border-[#24352B] text-white hover:border-[#8C9A84]' 
+                  : 'bg-white border-[#E6E2DA] text-[#2D3A31] hover:border-[#8C9A84]'
+              }`}
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+              {darkMode ? '☀️' : '🌙'}
             </button>
             <button onClick={() => window.print()}
               className="btn-primary text-xs py-2.5 px-6">
@@ -389,24 +427,30 @@ export default function Dashboard() {
         {/* Retire badge & Step-up strategy switcher */}
         <div className="flex flex-col gap-6 mb-10">
           <div>
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2D3A31] text-white rounded-full text-sm font-medium shadow-soft">
-              <Target className="w-4 h-4 text-[#8C9A84]" strokeWidth={1.5} /> Retire by age {retireAge} 🎯
+            <span className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium shadow-soft ${
+              darkMode ? 'bg-[#8C9A84] text-[#0F1712]' : 'bg-[#2D3A31] text-white'
+            }`}>
+              <Target className="w-4 h-4" strokeWidth={1.5} /> Retire by age {retireAge} 🎯
             </span>
           </div>
 
-          <div className="bg-white border border-[#E6E2DA] rounded-3xl p-6 shadow-soft flex flex-col gap-6">
+          <div className={`border rounded-3xl p-6 shadow-soft flex flex-col gap-6 ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h4 className="font-serif font-bold text-[#2D3A31] text-lg mb-1">Select Investment Strategy</h4>
+                <h4 className={`font-serif font-bold text-lg mb-1 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>Select Investment Strategy</h4>
                 <p className="text-xs text-[#8C9A84]">Choose whether to increase your monthly investment annually (Step-Up) or keep it flat.</p>
               </div>
-              <div className="flex bg-[#F2F0EB] p-1.5 rounded-full self-start md:self-auto select-none">
+              <div className={`flex p-1.5 rounded-full self-start md:self-auto select-none ${
+                darkMode ? 'bg-[#121C16]' : 'bg-[#F2F0EB]'
+              }`}>
                 <button 
                   type="button"
                   onClick={() => { setUseStepUp(true); if (stepUpRate === 0) setStepUpRate(10); }}
                   className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all duration-300 ${
                     useStepUp 
-                      ? 'bg-[#2D3A31] text-white shadow-soft' 
+                      ? (darkMode ? 'bg-[#8C9A84] text-[#0F1712] shadow-soft' : 'bg-[#2D3A31] text-white shadow-soft') 
                       : 'text-[#8C9A84] hover:text-[#2D3A31]'
                   }`}
                 >
@@ -427,10 +471,12 @@ export default function Dashboard() {
             </div>
 
             {useStepUp && (
-              <div className="border-t border-[#E6E2DA] pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className={`border-t pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 ${
+                darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+              }`}>
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold text-[#2D3A31]">Choose Annual Step-Up Rate</span>
+                    <span className={`text-xs font-bold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>Choose Annual Step-Up Rate</span>
                     <span className="text-xs font-serif font-bold text-[#8C9A84] bg-[#8C9A84]/10 px-3 py-1 rounded-full">{stepUpRate}%</span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -440,7 +486,9 @@ export default function Dashboard() {
                       max="25" 
                       value={stepUpRate} 
                       onChange={(e) => setStepUpRate(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-[#F2F0EB] rounded-lg appearance-none cursor-pointer accent-[#2D3A31] focus:outline-none"
+                      className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer focus:outline-none ${
+                        darkMode ? 'bg-[#121C16] accent-[#8C9A84]' : 'bg-[#F2F0EB] accent-[#2D3A31]'
+                      }`}
                     />
                   </div>
                 </div>
@@ -454,8 +502,8 @@ export default function Dashboard() {
                       onClick={() => setStepUpRate(rate)}
                       className={`w-9 h-9 rounded-full text-xs font-bold flex items-center justify-center transition-all duration-200 border ${
                         stepUpRate === rate 
-                          ? 'bg-[#2D3A31] border-[#2D3A31] text-white shadow-sm' 
-                          : 'bg-white border-[#E6E2DA] text-[#8C9A84] hover:border-[#8C9A84] hover:text-[#2D3A31]'
+                          ? (darkMode ? 'bg-[#8C9A84] border-[#8C9A84] text-[#0F1712] shadow-sm' : 'bg-[#2D3A31] border-[#2D3A31] text-white shadow-sm') 
+                          : (darkMode ? 'bg-[#121C16] border-[#24352B] text-[#A3B19D] hover:border-[#8C9A84]' : 'bg-white border-[#E6E2DA] text-[#8C9A84] hover:border-[#8C9A84] hover:text-[#2D3A31]')
                       }`}
                     >
                       {rate}%
@@ -489,8 +537,10 @@ export default function Dashboard() {
         </section>
 
         {/* ── SURPLUS BREAKDOWN ── */}
-        <section className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 mb-12">
-          <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-6 flex items-center gap-2">
+        <section className={`rounded-3xl border shadow-soft p-8 mb-12 transition-colors duration-300 ${
+          darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+        }`}>
+          <h3 className={`font-serif text-xl font-bold mb-6 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
             <Zap className="w-5 h-5 text-[#8C9A84]" strokeWidth={1.5} /> Your Monthly Money Breakdown
           </h3>
           <div className="flex flex-col gap-4">
@@ -499,14 +549,14 @@ export default function Dashboard() {
               { label: 'Expenses', val: expenses, color: '#C27B66', w: pct(expenses,income) },
               { label: 'EMIs', val: emis, color: '#DCCFC2', w: pct(emis,income) },
               { label: 'Monthly SIP', val: sip, color: '#2D3A31', w: pct(sip,income) },
-              { label: 'Free Cash', val: freeCash, color: '#E6E2DA', w: pct(freeCash,income) },
+              { label: 'Free Cash', val: freeCash, color: darkMode ? '#8C9A84' : '#E6E2DA', w: pct(freeCash,income) },
             ].map((r, i) => (
               <div key={i} className="flex flex-col gap-1.5">
                 <div className="flex justify-between text-sm">
                   <span className="text-[#8C9A84] font-sans">{r.label}</span>
-                  <span className="text-[#2D3A31] font-semibold">{fmtCurrency(r.val)} ({r.w}%)</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{fmtCurrency(r.val)} ({r.w}%)</span>
                 </div>
-                <div className="w-full bg-[#F2F0EB] h-2 rounded-full overflow-hidden">
+                <div className={`w-full h-2 rounded-full overflow-hidden ${darkMode ? 'bg-[#121C16]' : 'bg-[#F2F0EB]'}`}>
                   <div className="h-full rounded-full transition-all duration-700" style={{ width: `${r.w}%`, backgroundColor: r.color }} />
                 </div>
               </div>
@@ -516,10 +566,12 @@ export default function Dashboard() {
 
         {/* ── MATH + YEAR TABLE ── */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          <div className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8">
-            <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-1">The Math Behind {fmtCurrency(mathCorpus)}</h3>
+          <div className={`rounded-3xl border shadow-soft p-8 transition-colors duration-300 ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
+            <h3 className={`font-serif text-xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>The Math Behind {fmtCurrency(mathCorpus)}</h3>
             <p className="text-xs text-[#8C9A84] mb-6">How {fmtCurrency(sip)}/month multiplies over time</p>
-            <div className="flex flex-col divide-y divide-[#E6E2DA]">
+            <div className={`flex flex-col divide-y ${darkMode ? 'divide-[#24352B]' : 'divide-[#E6E2DA]'}`}>
               {[
                 { label: 'Monthly SIP', val: fmtCurrency(sip) },
                 { label: 'Annual Step-up', val: useStepUp ? `${stepUpRate}% every year` : '0% (Flat SIP)' },
@@ -529,26 +581,32 @@ export default function Dashboard() {
               ].map((r, i) => (
                 <div key={i} className="flex justify-between py-3 text-sm">
                   <span className="text-[#8A8F98]">{r.label}</span>
-                  <span className="text-[#2D3A31] font-semibold">{r.val}</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{r.val}</span>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-[#8C9A84] mt-4 pt-4 border-t border-[#E6E2DA] italic">
+            <p className={`text-xs text-[#8C9A84] mt-4 pt-4 border-t italic ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
               Using SIP future value formula with {cagrLabel} CAGR + {stepUpRate}% annual step-up
             </p>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8">
+          <div className={`rounded-3xl border shadow-soft p-8 transition-colors duration-300 ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
             <h3 className="section-label mb-6">Year by Year Growth</h3>
             <div className="flex flex-col">
-              <div className="flex justify-between text-xs font-sans tracking-widest text-[#8C9A84] uppercase pb-3 border-b border-[#E6E2DA] mb-2">
+              <div className={`flex justify-between text-xs font-sans tracking-widest text-[#8C9A84] uppercase pb-3 border-b mb-2 ${
+                darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+              }`}>
                 <span>Year</span><span>Corpus</span><span>Monthly SIP</span>
               </div>
               {checkpoints.map((cp, i) => (
-                <div key={i} className="flex justify-between items-center py-3 border-b border-[#E6E2DA] text-sm last:border-0">
+                <div key={i} className={`flex justify-between items-center py-3 border-b text-sm last:border-0 ${
+                  darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+                }`}>
                   <span className="text-[#8C9A84]">Year {cp.year}</span>
                   <span className="font-serif font-bold text-[#8C9A84]">{fmtShort(cp.corpus)}</span>
-                  <span className="text-[#2D3A31] font-semibold">{fmtShort(cp.sip)}</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{fmtShort(cp.sip)}</span>
                 </div>
               ))}
             </div>
@@ -556,7 +614,9 @@ export default function Dashboard() {
         </section>
 
         {/* ── COACH SUMMARY ── */}
-        <section className="bg-[#2D3A31] rounded-3xl p-8 mb-12">
+        <section className={`rounded-3xl p-8 mb-12 border ${
+          darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-[#2D3A31] border-transparent'
+        }`}>
           <div className="flex items-center justify-between mb-5">
             <span className="section-label text-[#8C9A84]">Coach Agent Says</span>
             <span className="inline-flex px-3 py-1 bg-[#8C9A84]/20 rounded-full text-[#8C9A84] text-xs font-medium">
@@ -571,20 +631,26 @@ export default function Dashboard() {
         </section>
 
         {/* ── ASSET BREAKDOWN & 100% ALLOCATION INFO ── */}
-        <section className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 mb-12">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-[#E6E2DA]">
-            <h3 className="font-serif text-xl font-bold text-[#2D3A31] flex items-center gap-2">
+        <section className={`rounded-3xl border shadow-soft p-8 mb-12 transition-colors duration-300 ${
+          darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+        }`}>
+          <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b ${
+            darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+          }`}>
+            <h3 className={`font-serif text-xl font-bold flex items-center gap-2 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
               <TrendingUp className="w-5 h-5 text-[#8C9A84]" strokeWidth={1.5} /> Asset Allocation & Stock/Fund Breakdown
             </h3>
             
             {/* Split vs Single Fund Option Selector */}
-            <div className="flex bg-[#F2F0EB] p-1 rounded-full self-start md:self-auto select-none">
+            <div className={`flex p-1 rounded-full self-start md:self-auto select-none ${
+              darkMode ? 'bg-[#121C16]' : 'bg-[#F2F0EB]'
+            }`}>
               <button 
                 type="button"
                 onClick={() => setAllocationMode('split')}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
                   allocationMode === 'split' 
-                    ? 'bg-[#2D3A31] text-white shadow-soft' 
+                    ? (darkMode ? 'bg-[#8C9A84] text-[#0F1712] shadow-soft' : 'bg-[#2D3A31] text-white shadow-soft') 
                     : 'text-[#8C9A84] hover:text-[#2D3A31]'
                 }`}
               >
@@ -595,7 +661,7 @@ export default function Dashboard() {
                 onClick={() => setAllocationMode('single')}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
                   allocationMode === 'single' 
-                    ? 'bg-[#2D3A31] text-white shadow-soft' 
+                    ? (darkMode ? 'bg-[#8C9A84] text-[#0F1712] shadow-soft' : 'bg-[#2D3A31] text-white shadow-soft') 
                     : 'text-[#8C9A84] hover:text-[#2D3A31]'
                 }`}
               >
@@ -606,9 +672,11 @@ export default function Dashboard() {
 
           {/* Split Portfolio Hedges Skip Toggle */}
           {allocationMode === 'split' && (
-            <div className="mb-6 p-4 bg-[#F2F0EB]/60 rounded-2xl border border-[#E6E2DA] flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-[fadeIn_0.2s_ease-out]">
+            <div className={`mb-6 p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-[fadeIn_0.2s_ease-out] ${
+              darkMode ? 'bg-[#121C16]/80 border-[#24352B]' : 'bg-[#F2F0EB]/60 border-[#E6E2DA]'
+            }`}>
               <div>
-                <h5 className="font-serif font-bold text-xs text-[#2D3A31] mb-0.5">🚀 Optimize for Maximum Returns (Skip Low-Return Hedges)</h5>
+                <h5 className={`font-serif font-bold text-xs mb-0.5 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>🚀 Optimize for Maximum Returns (Skip Low-Return Hedges)</h5>
                 <p className="text-[11px] text-[#8C9A84]">Excludes safe Gold (10%), Liquid Funds (10%), and Index ETFs (20%) to double-down on High-Growth Equity Mutual Funds.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer select-none self-start sm:self-auto">
@@ -618,7 +686,9 @@ export default function Dashboard() {
                   onChange={(e) => setSkipLowReturn(e.target.checked)}
                   className="sr-only peer" 
                 />
-                <div className="w-11 h-6 bg-[#E6E2DA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2D3A31]"></div>
+                <div className={`w-11 h-6 bg-[#E6E2DA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
+                  darkMode ? 'peer-checked:bg-[#8C9A84]' : 'peer-checked:bg-[#2D3A31]'
+                }`}></div>
               </label>
             </div>
           )}
@@ -632,6 +702,7 @@ export default function Dashboard() {
                     ? displayedInvestments 
                     : [{ category: getSingleFund().name, percentage: 100 }]
                 } 
+                darkMode={darkMode}
               />
             </div>
             
@@ -643,19 +714,21 @@ export default function Dashboard() {
                     const itemAmt = Math.round((item.percentage / 100) * sip);
                     
                     // Curated colors for notes matching the categories
-                    let noteBg = 'bg-[#8C9A84]/10 border-[#8C9A84]/40 text-[#2D3A31]';
+                    let noteBg = `bg-[#8C9A84]/10 border-[#8C9A84]/40 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`;
                     if (item.category.includes('Small')) {
-                      noteBg = 'bg-[#C27B66]/10 border-[#C27B66]/40 text-[#2D3A31]';
+                      noteBg = `bg-[#C27B66]/10 border-[#C27B66]/40 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`;
                     } else if (item.category.includes('Nifty') || item.category.includes('Large')) {
-                      noteBg = 'bg-[#DCCFC2]/45 border-[#DCCFC2]/80 text-[#2D3A31]';
+                      noteBg = `bg-[#DCCFC2]/45 border-[#DCCFC2]/80 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`;
                     } else if (item.category.includes('Gold') || item.category.includes('Silver')) {
-                      noteBg = 'bg-amber-500/10 border-amber-500/40 text-amber-900';
+                      noteBg = `bg-amber-500/10 border-amber-500/40 ${darkMode ? 'text-amber-200' : 'text-amber-900'}`;
                     } else if (item.category.includes('Liquid') || item.category.includes('Emergency')) {
-                      noteBg = 'bg-sky-500/10 border-sky-500/40 text-sky-900';
+                      noteBg = `bg-sky-500/10 border-sky-500/40 ${darkMode ? 'text-sky-200' : 'text-sky-900'}`;
                     }
 
                     return (
-                      <div key={idx} className="flex items-center gap-4 p-3.5 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl shadow-soft">
+                      <div key={idx} className={`flex items-center gap-4 p-3.5 border rounded-2xl shadow-soft transition-colors duration-300 ${
+                        darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F9F8F4] border-[#E6E2DA]'
+                      }`}>
                         {/* Visual Note - replicating the image note graphic structure */}
                         <div className={`w-28 py-3 px-2 border rounded-xl flex flex-col items-center justify-center font-serif font-bold text-center ${noteBg} shadow-sm select-none`}>
                           <span className="text-[9px] uppercase font-sans tracking-wider opacity-60 mb-0.5">Note Split</span>
@@ -664,8 +737,10 @@ export default function Dashboard() {
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs font-bold text-[#2D3A31] truncate">{item.category}</span>
-                            <span className="text-xs font-mono font-bold bg-[#F2F0EB] text-[#8C9A84] px-2 py-0.5 rounded-full">{item.percentage}%</span>
+                            <span className={`text-xs font-bold truncate ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{item.category}</span>
+                            <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${
+                              darkMode ? 'bg-[#121C16] text-[#8C9A84]' : 'bg-[#F2F0EB] text-[#8C9A84]'
+                            }`}>{item.percentage}%</span>
                           </div>
                           <p className="text-[11px] text-[#8C9A84] leading-relaxed italic">{item.details}</p>
                         </div>
@@ -675,16 +750,20 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-4 p-4 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl shadow-soft">
+                  <div className={`flex items-center gap-4 p-4 border rounded-2xl shadow-soft transition-colors duration-300 ${
+                    darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F9F8F4] border-[#E6E2DA]'
+                  }`}>
                     {/* Visual Note for Single Fund */}
-                    <div className="w-28 py-4 px-2 border border-[#2D3A31] bg-[#2D3A31] text-white rounded-xl flex flex-col items-center justify-center font-serif font-bold shadow-sm select-none">
+                    <div className={`w-28 py-4 px-2 border rounded-xl flex flex-col items-center justify-center font-serif font-bold shadow-sm select-none ${
+                      darkMode ? 'border-[#8C9A84] bg-[#8C9A84] text-[#0F1712]' : 'border-[#2D3A31] bg-[#2D3A31] text-white'
+                    }`}>
                       <span className="text-[9px] uppercase font-sans tracking-widest opacity-80 mb-0.5">Single Cash</span>
                       <span className="text-sm font-extrabold">{fmtCurrency(sip)}</span>
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-bold text-[#2D3A31]">{getSingleFund().name}</span>
+                        <span className={`text-xs font-bold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{getSingleFund().name}</span>
                         <span className="text-xs font-mono font-bold bg-[#8C9A84] text-white px-2 py-0.5 rounded-full">100%</span>
                       </div>
                       <p className="text-[11px] text-[#8C9A84] leading-relaxed italic font-serif">
@@ -693,29 +772,31 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-[#F2F0EB] rounded-2xl border border-[#E6E2DA] text-xs text-[#8C9A84]">
-                    <h4 className="font-serif font-bold text-[#2D3A31] mb-2">Comparison: Split vs Single Fund</h4>
+                  <div className={`p-4 rounded-2xl border text-xs text-[#8C9A84] transition-colors duration-300 ${
+                    darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F2F0EB] border-[#E6E2DA]'
+                  }`}>
+                    <h4 className={`font-serif font-bold mb-2 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>Comparison: Split vs Single Fund</h4>
                     <table className="w-full text-left text-[11px] border-collapse mt-2 font-sans">
                       <thead>
-                        <tr className="border-b border-[#E6E2DA] text-[#2D3A31] font-bold">
+                        <tr className={`border-b font-bold ${darkMode ? 'border-[#24352B] text-white' : 'border-[#E6E2DA] text-[#2D3A31]'}`}>
                           <th className="pb-1.5">Metric</th>
                           <th className="pb-1.5 text-center">Split Portfolio</th>
                           <th className="pb-1.5 text-right">Single Fund</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#E6E2DA]">
+                      <tbody className={`divide-y ${darkMode ? 'divide-[#24352B]' : 'divide-[#E6E2DA]'}`}>
                         <tr>
-                          <td className="py-1.5 text-[#2D3A31] font-medium">Monthly Mandates</td>
+                          <td className={`py-1.5 font-medium ${darkMode ? 'text-[#A3B19D]' : 'text-[#2D3A31]'}`}>Monthly Mandates</td>
                           <td className="py-1.5 text-center">5 Automations</td>
                           <td className="py-1.5 text-right text-emerald-700 font-bold">1 Automation (Easy)</td>
                         </tr>
                         <tr>
-                          <td className="py-1.5 text-[#2D3A31] font-medium">Rebalancing Needs</td>
+                          <td className={`py-1.5 font-medium ${darkMode ? 'text-[#A3B19D]' : 'text-[#2D3A31]'}`}>Rebalancing Needs</td>
                           <td className="py-1.5 text-center">Manual Rebalancing</td>
                           <td className="py-1.5 text-right text-emerald-700 font-bold">Auto-Managed by Fund</td>
                         </tr>
                         <tr>
-                          <td className="py-1.5 text-[#2D3A31] font-medium">Expected CAGR</td>
+                          <td className={`py-1.5 font-medium ${darkMode ? 'text-[#A3B19D]' : 'text-[#2D3A31]'}`}>Expected CAGR</td>
                           <td className="py-1.5 text-center text-emerald-700 font-bold">
                             {skipLowReturn 
                               ? (risk === 'Aggressive' ? '17.2%' : risk === 'Conservative' ? '13.0%' : '15.8%') 
@@ -726,14 +807,14 @@ export default function Dashboard() {
                           </td>
                         </tr>
                         <tr>
-                          <td className="py-1.5 text-[#2D3A31] font-medium">Hedges (Gold/Liquid)</td>
+                          <td className={`py-1.5 font-medium ${darkMode ? 'text-[#A3B19D]' : 'text-[#2D3A31]'}`}>Hedges (Gold/Liquid)</td>
                           <td className={`py-1.5 text-center font-bold ${skipLowReturn ? 'text-rose-700' : 'text-emerald-700'}`}>
                             {skipLowReturn ? 'None (Skipped ❌)' : 'Included (20% ✅)'}
                           </td>
                           <td className="py-1.5 text-right text-rose-700">None (0% ❌)</td>
                         </tr>
                         <tr>
-                          <td className="py-1.5 text-[#2D3A31] font-medium">Volatility Risk</td>
+                          <td className={`py-1.5 font-medium ${darkMode ? 'text-[#A3B19D]' : 'text-[#2D3A31]'}`}>Volatility Risk</td>
                           <td className={`py-1.5 text-center font-bold ${skipLowReturn ? 'text-rose-700' : 'text-emerald-700'}`}>
                             {skipLowReturn ? 'High (Speculative)' : 'Moderate (Smoothed)'}
                           </td>
@@ -745,12 +826,16 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className="mt-2 p-4 bg-[#F2F0EB]/50 rounded-2xl text-xs text-[#8C9A84] leading-relaxed border border-[#E6E2DA]">
-                <p className="font-serif font-bold text-[#2D3A31] mb-1">Note on 100% Asset Allocation:</p>
+              <div className={`mt-2 p-4 rounded-2xl text-xs text-[#8C9A84] leading-relaxed border ${
+                darkMode ? 'bg-[#121C16]/50 border-[#24352B]' : 'bg-[#F2F0EB]/50 border-[#E6E2DA]'
+              }`}>
+                <p className={`font-serif font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>Note on 100% Asset Allocation:</p>
                 This allocation signifies that 100% of your systematic monthly savings are deployed across diversified asset classes to optimize returns and cushion against volatility based on your risk profile. This includes growth engines (Equities/Mutual Funds/ETFs), tax shields (ELSS/Tax Savers), and liquidity buffers (Emergency Funds/Liquid Pockets).
               </div>
-              <div className="p-4 bg-[#F2F0EB]/50 rounded-2xl text-xs text-[#8C9A84] leading-relaxed border border-[#E6E2DA]">
-                <p className="font-serif font-bold text-[#2D3A31] mb-1">🛡️ What is an Emergency Fund?</p>
+              <div className={`p-4 rounded-2xl text-xs text-[#8C9A84] leading-relaxed border ${
+                darkMode ? 'bg-[#121C16]/50 border-[#24352B]' : 'bg-[#F2F0EB]/50 border-[#E6E2DA]'
+              }`}>
+                <p className={`font-serif font-bold mb-1 ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>🛡️ What is an Emergency Fund?</p>
                 An Emergency Fund is a dedicated cash buffer (recommended to be 6 times your monthly expenses) kept in highly liquid, low-risk options like liquid mutual funds or high-yield savings accounts. It acts as a financial shield for unexpected events (medical emergencies, job transitions), ensuring you never have to sell your long-term compound investments (SIPs/ETFs) during market downturns.
               </div>
             </div>
@@ -760,37 +845,41 @@ export default function Dashboard() {
         {/* ── 60-YEAR FINANCIAL VETERAN ADVISOR WISDOM & CAP SAFETY AWARENESS ── */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
           {/* Veteran Advice Card */}
-          <div className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 relative overflow-hidden">
+          <div className={`rounded-3xl border shadow-soft p-8 relative overflow-hidden transition-colors duration-300 ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
             <div className="absolute top-0 right-0 w-24 h-24 bg-[#C27B66]/5 rounded-full blur-2xl pointer-events-none" />
-            <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-2 flex items-center gap-2">
+            <h3 className={`font-serif text-xl font-bold mb-2 flex items-center gap-2 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
               👴 60-Year Financial Veteran's Wisdom
             </h3>
             <p className="text-xs text-[#8C9A84] mb-6">Battle-tested advice on asset classes & wealth preservation</p>
             
             <div className="flex flex-col gap-4 text-xs">
-              <div className="p-3 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl">
-                <h5 className="font-bold text-[#2D3A31] mb-1 flex items-center gap-1.5">📈 Mutual Funds & ETFs (Primary Compounding)</h5>
+              <div className={`p-3 border rounded-2xl transition-colors ${darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F9F8F4] border-[#E6E2DA]'}`}>
+                <h5 className={`font-bold mb-1 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>📈 Mutual Funds & ETFs (Primary Compounding)</h5>
                 <p className="text-[#8C9A84] leading-relaxed">
                   "Put 80-90% of your growth engine here. Automated monthly SIPs in low-cost index ETFs and diversified Flexi Cap funds are the single best wealth creation vehicle for retail earners."
                 </p>
               </div>
 
-              <div className="p-3 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl">
-                <h5 className="font-bold text-[#2D3A31] mb-1 flex items-center gap-1.5">🪙 Gold & Silver (Inflation Hedges)</h5>
+              <div className={`p-3 border rounded-2xl transition-colors ${darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F9F8F4] border-[#E6E2DA]'}`}>
+                <h5 className={`font-bold mb-1 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>🪙 Gold & Silver (Inflation Hedges)</h5>
                 <p className="text-[#8C9A84] leading-relaxed">
                   "Gold and silver do not generate cash flow or earnings, but they act as global crisis insurance. Keep them strictly capped at 5-10% of your portfolio to hedge against currency decay."
                 </p>
               </div>
 
-              <div className="p-3 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl border-rose-100 bg-rose-50/10">
-                <h5 className="font-bold text-rose-800 mb-1 flex items-center gap-1.5">🏡 Land & Real Estate (Lump-Sum Blocks)</h5>
-                <p className="text-rose-700 leading-relaxed">
+              <div className={`p-3 border rounded-2xl transition-colors ${
+                darkMode ? 'border-rose-950/40 bg-rose-950/10' : 'border-rose-100 bg-rose-50/10'
+              }`}>
+                <h5 className={`font-bold mb-1 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-rose-400' : 'text-rose-800'}`}>🏡 Land & Real Estate (Lump-Sum Blocks)</h5>
+                <p className={`leading-relaxed transition-colors ${darkMode ? 'text-rose-300/90' : 'text-rose-700'}`}>
                   "Never attempt systematic SIPs on land. Real estate is highly illiquid, capital-intensive, and carries high entry/exit friction. Accumulate a liquid, compounding equity corpus first. Once established, deploy lump sums into tangible land holdings."
                 </p>
               </div>
 
-              <div className="p-3 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl">
-                <h5 className="font-bold text-[#2D3A31] mb-1 flex items-center gap-1.5">⚖️ Tax Saving with Existing Loans</h5>
+              <div className={`p-3 border rounded-2xl transition-colors ${darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F9F8F4] border-[#E6E2DA]'}`}>
+                <h5 className={`font-bold mb-1 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>⚖️ Tax Saving with Existing Loans</h5>
                 <p className="text-[#8C9A84] leading-relaxed">
                   {pCurrency === 'INR' ? (
                     "If you have a Home Loan, leverage Section 24(b) to deduct up to ₹2 Lakhs on interest, and Section 80C for principal repayment. For Education Loans, claim unlimited interest deductions under Section 80E. Check if these loan benefits already fill your tax exemption quotas before locking extra cash into ELSS."
@@ -803,16 +892,20 @@ export default function Dashboard() {
           </div>
 
           {/* Cap Awareness & Safety Warnings */}
-          <div className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 relative overflow-hidden">
+          <div className={`rounded-3xl border shadow-soft p-8 relative overflow-hidden transition-colors duration-300 ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
             <div className="absolute top-0 right-0 w-24 h-24 bg-[#8C9A84]/5 rounded-full blur-2xl pointer-events-none" />
-            <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-2 flex items-center gap-2">
+            <h3 className={`font-serif text-xl font-bold mb-2 flex items-center gap-2 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
               🛡️ Market Cap Safety & Risk Grading
             </h3>
             <p className="text-xs text-[#8C9A84] mb-6">Understanding which market caps to trust and which to avoid</p>
             
             <div className="flex flex-col gap-4 text-xs">
-              <div className="p-4 border border-emerald-100 bg-emerald-50/10 rounded-2xl">
-                <h5 className="font-bold text-emerald-800 mb-1.5 flex items-center gap-1.5">
+              <div className={`p-4 border rounded-2xl transition-colors ${
+                darkMode ? 'border-emerald-950 bg-emerald-950/10' : 'border-emerald-100 bg-emerald-50/10'
+              }`}>
+                <h5 className={`font-bold mb-1.5 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-emerald-400' : 'text-emerald-800'}`}>
                   🟢 Recommended High-Trust Assets (Large & Flexi-Cap)
                 </h5>
                 <p className="text-[#8C9A84] leading-relaxed mb-2">
@@ -825,14 +918,16 @@ export default function Dashboard() {
                 </ul>
               </div>
 
-              <div className="p-4 border border-rose-100 bg-rose-50/20 rounded-2xl">
-                <h5 className="font-bold text-rose-800 mb-1.5 flex items-center gap-1.5">
+              <div className={`p-4 border rounded-2xl transition-colors ${
+                darkMode ? 'border-rose-950 bg-rose-950/10' : 'border-rose-100 bg-rose-50/20'
+              }`}>
+                <h5 className={`font-bold mb-1.5 flex items-center gap-1.5 transition-colors ${darkMode ? 'text-rose-400' : 'text-rose-800'}`}>
                   🚨 Don't Invest Warning (Speculative Micro-Caps & Penny Stocks)
                 </h5>
-                <p className="text-rose-700 leading-relaxed mb-2">
+                <p className={`leading-relaxed mb-2 transition-colors ${darkMode ? 'text-rose-300' : 'text-rose-700'}`}>
                   <strong>Do not buy penny stocks or unrated micro/nano caps.</strong> These assets lack liquidity and carry severe vulnerabilities:
                 </p>
-                <ul className="list-disc pl-4 text-rose-700 flex flex-col gap-1">
+                <ul className={`list-disc pl-4 flex flex-col gap-1 transition-colors ${darkMode ? 'text-rose-300' : 'text-rose-700'}`}>
                   <li><strong>Price Manipulation:</strong> Highly susceptible to "pump & dump" schemes.</li>
                   <li><strong>Illiquidity:</strong> You may find yourself unable to sell or exit when the market drops.</li>
                   <li><strong>High Insolvency Rates:</strong> Small speculative companies have high default and failure rates. Avoid them completely for retirement planning!</li>
@@ -843,17 +938,19 @@ export default function Dashboard() {
         </section>
 
         {/* ── SYSTEMATIC MECHANISMS (SIP/SWP/STP) & ETF vs MUTUAL FUNDS ── */}
-        <section className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 mb-12">
-          <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-8">
+        <section className={`rounded-3xl border shadow-soft p-8 mb-12 transition-colors duration-300 ${
+          darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+        }`}>
+          <h3 className={`font-serif text-xl font-bold mb-8 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
             Systematic Mechanisms & Investment Baskets
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="flex flex-col gap-6">
-              <h4 className="section-label pb-2 border-b border-[#E6E2DA]">The 4 Systematic & Tax Mechanisms (The How)</h4>
+              <h4 className={`section-label pb-2 border-b ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>The 4 Systematic & Tax Mechanisms (The How)</h4>
               
               <div className="flex flex-col gap-4 text-xs">
                 <div>
-                  <h5 className="font-bold text-[#2D3A31] mb-1">1. SIP (Systematic Investment Plan)</h5>
+                  <h5 className={`font-bold mb-1 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>1. SIP (Systematic Investment Plan)</h5>
                   <p className="text-[#8C9A84] leading-relaxed">
                     <strong>What it is:</strong> The Inflow mechanism. You instruct your bank to automatically invest a fixed amount every month.
                   </p>
@@ -863,7 +960,7 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <h5 className="font-bold text-[#2D3A31] mb-1">2. SWP (Systematic Withdrawal Plan)</h5>
+                  <h5 className={`font-bold mb-1 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>2. SWP (Systematic Withdrawal Plan)</h5>
                   <p className="text-[#8C9A84] leading-relaxed">
                     <strong>What it is:</strong> The Outflow mechanism (opposite of a SIP). Automatically sells a fixed amount of units from an accumulated lump sum every month and sends the cash to your bank account.
                   </p>
@@ -873,7 +970,7 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <h5 className="font-bold text-[#2D3A31] mb-1">3. STP (Systematic Transfer Plan)</h5>
+                  <h5 className={`font-bold mb-1 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>3. STP (Systematic Transfer Plan)</h5>
                   <p className="text-[#8C9A84] leading-relaxed">
                     <strong>What it is:</strong> The Bridge mechanism. Automatically moves a fixed chunk from a safe low-risk fund (like a Debt or Liquid Fund) to a high-growth Equity Fund at regular intervals.
                   </p>
@@ -883,7 +980,7 @@ export default function Dashboard() {
                 </div>
 
                 <div>
-                  <h5 className="font-bold text-[#2D3A31] mb-1">{getTaxMechanism().title}</h5>
+                  <h5 className={`font-bold mb-1 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{getTaxMechanism().title}</h5>
                   <p className="text-[#8C9A84] leading-relaxed">
                     <strong>What it is:</strong> {getTaxMechanism().desc}
                   </p>
@@ -895,17 +992,17 @@ export default function Dashboard() {
             </div>
 
             <div className="flex flex-col gap-6">
-              <h4 className="section-label pb-2 border-b border-[#E6E2DA]">ETFs vs. Mutual Funds (The What)</h4>
+              <h4 className={`section-label pb-2 border-b ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>ETFs vs. Mutual Funds (The What)</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-[#E6E2DA] text-[#8C9A84]">
+                    <tr className={`border-b text-[#8C9A84] ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
                       <th className="py-2">Feature</th>
                       <th className="py-2">Mutual Fund (MF)</th>
                       <th className="py-2">Exchange-Traded Fund (ETF)</th>
                     </tr>
                   </thead>
-                  <tbody className="text-[#2D3A31] divide-y divide-[#E6E2DA]">
+                  <tbody className={`divide-y transition-colors ${darkMode ? 'text-white divide-[#24352B]' : 'text-[#2D3A31] divide-[#E6E2DA]'}`}>
                     <tr>
                       <td className="py-3 font-semibold text-[#8C9A84]">Where to Buy</td>
                       <td className="py-3">Directly from the fund house or apps (Groww, Coin, Kuvera).</td>
@@ -929,7 +1026,9 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               </div>
-              <div className="mt-4 text-xxs text-[#8C9A84] bg-[#F2F0EB] p-4 rounded-xl flex flex-col gap-1 border border-[#E6E2DA]">
+              <div className={`mt-4 text-xxs text-[#8C9A84] p-4 rounded-xl flex flex-col gap-1 border transition-colors ${
+                darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F2F0EB] border-[#E6E2DA]'
+              }`}>
                 <span>💡 <strong>Want to build wealth monthly?</strong> Set up a SIP.</span>
                 <span>💡 <strong>Got a bonus and want to invest safely?</strong> Set up an STP.</span>
                 <span>💡 <strong>Ready to live off your accumulated wealth?</strong> Set up an SWP.</span>
@@ -940,23 +1039,25 @@ export default function Dashboard() {
         </section>
 
         {/* ── INVESTOR RECOMMENDATIONS & STEP-UP VS FLAT WARNING ── */}
-        <section className="bg-white rounded-3xl border border-[#E6E2DA] shadow-soft p-8 mb-12">
-          <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-8">
+        <section className={`rounded-3xl border shadow-soft p-8 mb-12 transition-colors duration-300 ${
+          darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+        }`}>
+          <h3 className={`font-serif text-xl font-bold mb-8 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
             Investor Guidelines & Risk Management
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="flex flex-col gap-6">
               <div>
-                <h4 className="section-label pb-2 border-b border-[#E6E2DA] mb-4">Risk Grading & Instrument Choices</h4>
+                <h4 className={`section-label pb-2 border-b mb-4 ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>Risk Grading & Instrument Choices</h4>
                 <div className="flex flex-col gap-4 text-xs">
                   <div>
-                    <h5 className="font-bold text-emerald-600 mb-1">🟢 Safe & Low Volatility (Buffer & Security)</h5>
+                    <h5 className="font-bold text-emerald-600 dark:text-emerald-400 mb-1">🟢 Safe & Low Volatility (Buffer & Security)</h5>
                     <p className="text-[#8C9A84] leading-relaxed">
                       Fixed Deposits (FDs), government savings bonds, liquid mutual funds, and short-term debt assets. These carry minimal capital loss risk but struggle to beat long-term inflation.
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-bold text-rose-600 mb-1">🔴 Higher Volatility (Growth & Compounding)</h5>
+                    <h5 className="font-bold text-rose-600 dark:text-rose-400 mb-1">🔴 Higher Volatility (Growth & Compounding)</h5>
                     <p className="text-[#8C9A84] leading-relaxed">
                       Equity Mutual Funds, Index ETFs, and sectoral plays. Volatile in the short term, but necessary to construct a significant retirement corpus over 10+ years.
                     </p>
@@ -965,7 +1066,7 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <h4 className="section-label pb-2 border-b border-[#E6E2DA] mb-4">Common Mistakes to Avoid</h4>
+                <h4 className={`section-label pb-2 border-b mb-4 ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>Common Mistakes to Avoid</h4>
                 <ul className="list-disc pl-5 text-xs text-[#8C9A84] flex flex-col gap-2">
                   <li><strong>Exiting during market dips:</strong> Redeeming investments when indices crash destroys compounding progress.</li>
                   <li><strong>Forgetting the Step-Up:</strong> Keeping your monthly savings amount flat over 30 years severely limits final wealth.</li>
@@ -974,41 +1075,45 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-[#E6E2DA] pt-6 lg:pt-0 lg:pl-8">
+            <div className={`flex flex-col justify-between border-t lg:border-t-0 lg:border-l pt-6 lg:pt-0 lg:pl-8 ${
+              darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+            }`}>
               <div>
-                <h4 className="section-label pb-2 border-b border-[#E6E2DA] mb-4">The Compounding Power of Step-Up</h4>
+                <h4 className={`section-label pb-2 border-b mb-4 ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>The Compounding Power of Step-Up</h4>
                 <p className="text-xs text-[#8C9A84] leading-relaxed mb-4">
                   Increasing your monthly investment by <strong>{stepUpRate}% every year</strong> as your salary grows dramatically accelerates compounding.
                 </p>
-                <div className="flex justify-between py-2 border-b border-[#E6E2DA] text-xs">
+                <div className={`flex justify-between py-2 border-b text-xs ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
                   <span className="text-[#8C9A84]">Year 1 SIP</span>
-                  <span className="text-[#2D3A31] font-semibold">{fmtCurrency(sip)}</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{fmtCurrency(sip)}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-[#E6E2DA] text-xs">
+                <div className={`flex justify-between py-2 border-b text-xs ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
                   <span className="text-[#8C9A84]">Year 5 SIP (with {stepUpRate}% step-up)</span>
-                  <span className="text-[#2D3A31] font-semibold">{fmtCurrency(sip * Math.pow(1 + (stepUpRate / 100), 4))}</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{fmtCurrency(sip * Math.pow(1 + (stepUpRate / 100), 4))}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-[#E6E2DA] text-xs">
+                <div className={`flex justify-between py-2 border-b text-xs ${darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'}`}>
                   <span className="text-[#8C9A84]">Year 10 SIP (with {stepUpRate}% step-up)</span>
-                  <span className="text-[#2D3A31] font-semibold">{fmtCurrency(sip * Math.pow(1 + (stepUpRate / 100), 9))}</span>
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{fmtCurrency(sip * Math.pow(1 + (stepUpRate / 100), 9))}</span>
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl">
-                <h4 className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2">⚠️ The Cost of "No Step-Up" & Inflation Decay</h4>
+              <div className={`mt-6 p-4 rounded-2xl border transition-colors ${
+                darkMode ? 'bg-rose-950/10 border-rose-900/40 text-rose-200' : 'bg-rose-50 border border-rose-100'
+              }`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider mb-2 ${darkMode ? 'text-rose-400' : 'text-rose-800'}`}>⚠️ The Cost of "No Step-Up" & Inflation Decay</h4>
                 {!useStepUp ? (
-                  <p className="text-xs text-rose-700 font-semibold mb-2">
+                  <p className={`text-xs font-semibold mb-2 ${darkMode ? 'text-rose-300' : 'text-rose-700'}`}>
                     🚨 By not stepping up, you lose {fmtCurrency(stepUpDifference)} in wealth! Your corpus drops from {fmtCurrency(mathCorpusWith)} to {fmtCurrency(mathCorpusWithout)}.
                   </p>
                 ) : (
-                  <p className="text-xs text-emerald-800 font-semibold mb-2">
+                  <p className={`text-xs font-semibold mb-2 ${darkMode ? 'text-emerald-400' : 'text-emerald-800'}`}>
                     ✅ Step-Up Advantage: Your {stepUpRate}% annual step-up strategy gains you an additional {fmtCurrency(stepUpDifference)} compared to a flat SIP!
                   </p>
                 )}
-                <p className="text-xs text-rose-700 leading-relaxed">
+                <p className={`text-xs leading-relaxed ${darkMode ? 'text-rose-300' : 'text-rose-700'}`}>
                   Inflation erodes the purchasing power of your money. At <strong>7% annual inflation</strong>, a final corpus of <strong>{fmtCurrency(baseValue)}</strong> in {years} years will hold the purchasing power of only <strong>{fmtCurrency(erodedValue)}</strong> today!
                 </p>
-                <p className="text-xs text-rose-700 leading-relaxed mt-2">
+                <p className={`text-xs leading-relaxed mt-2 ${darkMode ? 'text-rose-300' : 'text-rose-700'}`}>
                   Without an annual step-up to fight inflation, your future wealth will buy only a fraction of what it buys today (e.g. buying a {assetTerm} today vs. barely buying a small car in {years} years with the same numeric amount).
                 </p>
               </div>
@@ -1018,19 +1123,23 @@ export default function Dashboard() {
 
         {/* ── MILESTONES ── */}
         <section className="mb-12">
-          <h3 className="font-serif text-xl font-bold text-[#2D3A31] mb-8 flex items-center gap-2">
+          <h3 className={`font-serif text-xl font-bold mb-8 flex items-center gap-2 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>
             <Calendar className="w-5 h-5 text-[#8C9A84]" strokeWidth={1.5} /> Milestone Roadmap
           </h3>
           <div className="relative flex flex-col gap-0 pl-2">
-            <div className="absolute left-4 top-0 bottom-0 w-px bg-[#E6E2DA]" />
+            <div className={`absolute left-4 top-0 bottom-0 w-px ${darkMode ? 'bg-[#24352B]' : 'bg-[#E6E2DA]'}`} />
             {(roadmap?.milestones||[]).map((m, i) => (
               <div key={i} className="flex gap-6 pb-8 relative">
-                <div className="w-8 h-8 rounded-full bg-[#2D3A31] flex-shrink-0 flex items-center justify-center text-white text-xs font-bold z-10">
+                <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold z-10 transition-colors ${
+                  darkMode ? 'bg-[#8C9A84] text-[#0F1712]' : 'bg-[#2D3A31] text-white'
+                }`}>
                   {i+1}
                 </div>
-                <div className="flex-1 bg-white rounded-2xl border border-[#E6E2DA] p-5 shadow-soft hover:-translate-y-0.5 transition-all duration-300">
+                <div className={`flex-1 rounded-2xl border p-5 shadow-soft hover:-translate-y-0.5 transition-all duration-300 ${
+                  darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+                }`}>
                   <span className="section-label block mb-1">{m.timeframe}</span>
-                  <h4 className="font-serif text-base font-bold text-[#2D3A31] mb-1">{m.title}</h4>
+                  <h4 className={`font-serif text-base font-bold mb-1 transition-colors ${darkMode ? 'text-white' : 'text-[#2D3A31]'}`}>{m.title}</h4>
                   <p className="text-xs text-[#8C9A84] leading-relaxed">{(m.description||'').replace(/INR\s/g,'₹').replace(/\.0(?=\b)/g,'')}</p>
                 </div>
               </div>
@@ -1041,7 +1150,9 @@ export default function Dashboard() {
 
 
         {/* ── FOOTER ── */}
-        <footer className="border-t border-[#E6E2DA] pt-8 flex justify-between items-center text-xs text-[#8C9A84] print:hidden">
+        <footer className={`border-t pt-8 flex justify-between items-center text-xs text-[#8C9A84] print:hidden ${
+          darkMode ? 'border-[#24352B]' : 'border-[#E6E2DA]'
+        }`}>
           <span className="flex items-center gap-1.5">
             Made with <Heart className="w-3.5 h-3.5 text-[#C27B66] fill-[#C27B66]" /> for early retirement planners
           </span>
@@ -1054,7 +1165,11 @@ export default function Dashboard() {
         {/* Toggle Button */}
         <button 
           onClick={() => setChatOpen(!chatOpen)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#2D3A31] hover:bg-[#8C9A84] text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+          className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
+            darkMode 
+              ? 'bg-[#8C9A84] text-[#0F1712] hover:bg-[#A3B19D]' 
+              : 'bg-[#2D3A31] text-white hover:bg-[#8C9A84]'
+          }`}
           title="Discuss doubts with your AI Coach"
         >
           {chatOpen ? (
@@ -1066,14 +1181,18 @@ export default function Dashboard() {
 
         {/* Chat Panel */}
         {chatOpen && (
-          <div className="fixed bottom-24 right-6 z-50 w-[360px] h-[500px] bg-white border border-[#E6E2DA] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+          <div className={`fixed bottom-24 right-6 z-50 w-[360px] h-[500px] border rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-[fadeIn_0.2s_ease-out] ${
+            darkMode ? 'bg-[#18231C] border-[#24352B]' : 'bg-white border-[#E6E2DA]'
+          }`}>
             {/* Header */}
-            <div className="bg-[#2D3A31] text-white px-5 py-4 flex items-center justify-between">
+            <div className={`px-5 py-4 flex items-center justify-between transition-colors ${
+              darkMode ? 'bg-[#121C16] text-[#F0F5F2]' : 'bg-[#2D3A31] text-white'
+            }`}>
               <div>
                 <h4 className="font-serif font-bold text-sm">WealthPath Coach</h4>
                 <p className="text-[10px] text-[#8C9A84]">Powered by Groq Llama 3</p>
               </div>
-              <button onClick={() => setChatOpen(false)} className="text-[#8C9A84] hover:text-white transition-colors">
+              <button onClick={() => setChatOpen(false)} className={`transition-colors ${darkMode ? 'text-[#8C9A84] hover:text-[#F0F5F2]' : 'text-[#8C9A84] hover:text-white'}`}>
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1085,15 +1204,17 @@ export default function Dashboard() {
                   key={idx} 
                   className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                     msg.role === 'user' 
-                      ? 'bg-[#2D3A31] text-white self-end rounded-br-none' 
-                      : 'bg-[#F2F0EB] text-[#2D3A31] self-start rounded-bl-none border border-[#E6E2DA]'
+                      ? (darkMode ? 'bg-[#8C9A84] text-[#0F1712] self-end rounded-br-none' : 'bg-[#2D3A31] text-white self-end rounded-br-none') 
+                      : (darkMode ? 'bg-[#121C16] text-[#F0F5F2] self-start rounded-bl-none border border-[#24352B]' : 'bg-[#F2F0EB] text-[#2D3A31] self-start rounded-bl-none border border-[#E6E2DA]')
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.text}</p>
                 </div>
               ))}
               {chatLoading && (
-                <div className="bg-[#F2F0EB] text-[#2D3A31] max-w-[80%] rounded-2xl rounded-bl-none border border-[#E6E2DA] px-4 py-3 text-xs self-start flex items-center gap-1.5">
+                <div className={`max-w-[80%] rounded-2xl rounded-bl-none border px-4 py-3 text-xs self-start flex items-center gap-1.5 ${
+                  darkMode ? 'bg-[#121C16] border-[#24352B]' : 'bg-[#F2F0EB] border-[#E6E2DA]'
+                }`}>
                   <span className="w-1.5 h-1.5 bg-[#8C9A84] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 bg-[#8C9A84] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 bg-[#8C9A84] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -1102,19 +1223,27 @@ export default function Dashboard() {
             </div>
 
             {/* Input Form */}
-            <form onSubmit={handleSendMessage} className="border-t border-[#E6E2DA] p-3 flex gap-2 bg-[#F9F8F4]">
+            <form onSubmit={handleSendMessage} className={`border-t p-3 flex gap-2 transition-colors ${
+              darkMode ? 'border-[#24352B] bg-[#121C16]' : 'border-[#E6E2DA] bg-[#F9F8F4]'
+            }`}>
               <input 
                 type="text" 
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Ask about your roadmap..."
                 disabled={chatLoading}
-                className="flex-1 bg-white border border-[#E6E2DA] rounded-full px-4 py-2 text-xs text-[#2D3A31] focus:outline-none focus:border-[#8C9A84] disabled:opacity-50"
+                className={`flex-1 border rounded-full px-4 py-2 text-xs focus:outline-none focus:border-[#8C9A84] disabled:opacity-50 transition-colors ${
+                  darkMode ? 'bg-[#18231C] border-[#24352B] text-white' : 'bg-white border-[#E6E2DA] text-[#2D3A31]'
+                }`}
               />
               <button 
                 type="submit"
                 disabled={chatLoading || !chatInput.trim()}
-                className="w-8 h-8 rounded-full bg-[#2D3A31] text-white flex items-center justify-center hover:bg-[#8C9A84] transition-colors disabled:opacity-40 disabled:hover:bg-[#2D3A31]"
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors disabled:opacity-40 ${
+                  darkMode 
+                    ? 'bg-[#8C9A84] text-[#0F1712] hover:bg-[#A3B19D] disabled:hover:bg-[#8C9A84]' 
+                    : 'bg-[#2D3A31] text-white hover:bg-[#8C9A84] disabled:hover:bg-[#2D3A31]'
+                }`}
               >
                 <Send className="w-3.5 h-3.5" />
               </button>

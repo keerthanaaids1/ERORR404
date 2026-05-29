@@ -5,12 +5,33 @@
 
 
 
+:root {
+  --bg-color: #F9F8F4;
+  --fg-color: #2D3A31;
+  --card-bg: #FFFFFF;
+  --card-border: #E6E2DA;
+  --input-bg: #F2F0EB;
+  --btn-primary-bg: #2D3A31;
+  --btn-primary-text: #FFFFFF;
+}
+
+[data-theme="dark"] {
+  --bg-color: #0F1712;
+  --fg-color: #F0F5F2;
+  --card-bg: #18231C;
+  --card-border: #24352B;
+  --input-bg: #121C16;
+  --btn-primary-bg: #8C9A84;
+  --btn-primary-text: #0F1712;
+}
+
 @layer base {
   body {
-    background-color: #F9F8F4;
-    color: #2D3A31;
+    background-color: var(--bg-color);
+    color: var(--fg-color);
     font-family: 'Source Sans 3', system-ui, sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   h1, h2, h3, h4 {
     font-family: 'Playfair Display', Georgia, serif;
@@ -19,16 +40,23 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center gap-2 bg-[#2D3A31] text-white text-sm tracking-widest uppercase rounded-full px-8 py-4 font-medium transition-all duration-300 hover:bg-[#C27B66] hover:shadow-xl;
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    @apply inline-flex items-center gap-2 text-sm tracking-widest uppercase rounded-full px-8 py-4 font-medium transition-all duration-300 hover:bg-[#C27B66] hover:shadow-xl;
   }
   .btn-secondary {
     @apply inline-flex items-center gap-2 border border-[#8C9A84] text-[#8C9A84] text-sm tracking-widest uppercase rounded-full px-8 py-4 font-medium transition-all duration-300 hover:bg-[#8C9A84] hover:text-white;
   }
   .card-botanical {
-    @apply bg-white rounded-3xl shadow-soft border border-[#E6E2DA] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl;
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    @apply rounded-3xl shadow-soft border transition-all duration-500 hover:-translate-y-1 hover:shadow-xl;
   }
   .input-botanical {
-    @apply w-full bg-[#F2F0EB] border-0 border-b-2 border-[#E6E2DA] rounded-xl px-4 py-3 text-[#2D3A31] text-sm focus:outline-none focus:border-[#8C9A84] transition-colors duration-300 placeholder:text-[#8C9A84]/60;
+    background-color: var(--input-bg);
+    color: var(--fg-color);
+    border-color: var(--card-border);
+    @apply w-full border-0 border-b-2 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#8C9A84] transition-colors duration-300 placeholder:text-[#8C9A84]/60;
   }
   .section-label {
     @apply text-xs tracking-widest uppercase text-[#8C9A84] font-medium font-sans;
