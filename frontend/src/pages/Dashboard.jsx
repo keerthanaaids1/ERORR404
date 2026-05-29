@@ -134,19 +134,187 @@ export default function Dashboard() {
   const freeCash = Math.max(0, income - expenses - emis - sip);
   const risk = profile?.risk || 'Balanced';
   
-  // Calculate dynamic CAGR depending on Allocation Mode, Hedges skipping, and Risk Appetite
-  let equity = 0.12;
-  if (allocationMode === 'split') {
-    if (skipLowReturn) {
-      // Excludes Gold (10%) and Liquid Fund (10%) and Index ETFs (20%), reallocating to Mid/Small-cap
-      equity = risk === 'Aggressive' ? 0.172 : risk === 'Conservative' ? 0.130 : 0.158;
-    } else {
-      equity = risk === 'Aggressive' ? 0.14 : risk === 'Conservative' ? 0.09 : 0.12;
+  const getSingleFund = () => {
+    switch (pCurrency) {
+      case 'INR':
+        return {
+          name: "Parag Parikh Flexi Cap Fund",
+          details: "Direct Growth Plan (~15.2% 5-year CAGR). Diversified across large stalwarts, mid-caps, and international equities."
+        };
+      case 'GBP':
+        return {
+          name: "Vanguard FTSE All-World UCITS ETF (VWRL)",
+          details: "Direct UK accumulation plan (~10.8% 5-year CAGR). Spreads equity exposure across thousands of global giants for robust hands-off growth."
+        };
+      case 'AED':
+        return {
+          name: "iShares Core MSCI World UCITS ETF (IWDA)",
+          details: "USD-denominated, tax-efficient global equity tracking (~11.2% CAGR) tailored for international professionals."
+        };
+      case 'AUD':
+        return {
+          name: "Vanguard Diversified High Growth Index ETF (VDHG)",
+          details: "Pre-mixed high growth allocation (~11.5% CAGR) with built-in franking credits for Australian tax efficiency."
+        };
+      case 'USD':
+      default:
+        return {
+          name: "Vanguard Total World Stock ETF (VT)",
+          details: "Broad global equity index tracking (~11.8% CAGR). Captures global growth across 8,000+ companies under a single high-trust portfolio."
+        };
     }
-  } else {
-    // Single fund has 100% equity exposure (higher return, higher volatility, no safety hedges)
-    equity = risk === 'Aggressive' ? 0.152 : risk === 'Conservative' ? 0.11 : 0.135;
-  }
+  };
+
+  const getOptimizedInvestments = () => {
+    switch (pCurrency) {
+      case 'INR':
+        return [
+          { category: "Mid Cap & Flexi Cap Mutual Funds", percentage: 55, details: "Parag Parikh Flexi Cap Fund (Growth, 14-16% CAGR)" },
+          { category: "Small Cap Mutual Funds", percentage: 45, details: "Nippon India Small Cap Fund (High volatility growth, 18-20% CAGR)" }
+        ];
+      case 'GBP':
+        return [
+          { category: "Global Equity Index Fund", percentage: 55, details: "Vanguard FTSE All-World Index (VWRL) (Global diversification, 9-11% CAGR)" },
+          { category: "UK & World Small Cap Growth", percentage: 45, details: "iShares MSCI World Small Cap UCITS ETF (WSML) (Dynamic small cap exposure, 12-14% CAGR)" }
+        ];
+      case 'AED':
+        return [
+          { category: "Developed Markets Global Tracker", percentage: 55, details: "iShares Core MSCI World UCITS ETF (IWDA) (Developed countries giants, 10-12% CAGR)" },
+          { category: "Emerging Markets Hyper Growth", percentage: 45, details: "iShares Core MSCI EM IMI UCITS ETF (EIMI) (Emerging tech and consumer stocks, 13-15% CAGR)" }
+        ];
+      case 'AUD':
+        return [
+          { category: "Australian Index Growth (VAS)", percentage: 55, details: "Vanguard Australian Shares Index ETF (VAS) (ASX 300 index, franked dividends, 9-11% CAGR)" },
+          { category: "International Shares Growth (VGS)", percentage: 45, details: "Vanguard MSCI Index International Shares ETF (VGS) (Global tech and innovators, 12-14% CAGR)" }
+        ];
+      case 'USD':
+      default:
+        return [
+          { category: "Vanguard S&P 500 Index (VOO)", percentage: 55, details: "Vanguard S&P 500 ETF (VOO) (Stable Large Cap compounding, 11-13% CAGR)" },
+          { category: "Vanguard Small-Cap Growth (VBK)", percentage: 45, details: "Vanguard Small-Cap Growth ETF (VBK) (High volatility mid/small caps, 14-16% CAGR)" }
+        ];
+    }
+  };
+
+  const getSingleFundCAGR = () => {
+    switch (pCurrency) {
+      case 'INR':
+        return risk === 'Aggressive' ? '15.2%' : risk === 'Conservative' ? '11%' : '13.5%';
+      case 'GBP':
+        return risk === 'Aggressive' ? '10.8%' : risk === 'Conservative' ? '7%' : '9%';
+      case 'AED':
+        return risk === 'Aggressive' ? '11.2%' : risk === 'Conservative' ? '7.5%' : '9.5%';
+      case 'AUD':
+        return risk === 'Aggressive' ? '11.5%' : risk === 'Conservative' ? '7.5%' : '9.5%';
+      case 'USD':
+      default:
+        return risk === 'Aggressive' ? '12.5%' : risk === 'Conservative' ? '8%' : '10.5%';
+    }
+  };
+
+  const getDynamicCAGR = () => {
+    if (allocationMode === 'split') {
+      if (skipLowReturn) {
+        switch (pCurrency) {
+          case 'INR':
+            return risk === 'Aggressive' ? 0.172 : risk === 'Conservative' ? 0.130 : 0.158;
+          case 'GBP':
+            return risk === 'Aggressive' ? 0.138 : risk === 'Conservative' ? 0.098 : 0.118;
+          case 'AED':
+            return risk === 'Aggressive' ? 0.142 : risk === 'Conservative' ? 0.102 : 0.122;
+          case 'AUD':
+            return risk === 'Aggressive' ? 0.145 : risk === 'Conservative' ? 0.105 : 0.125;
+          case 'USD':
+          default:
+            return risk === 'Aggressive' ? 0.148 : risk === 'Conservative' ? 0.108 : 0.128;
+        }
+      } else {
+        switch (pCurrency) {
+          case 'INR':
+            return risk === 'Aggressive' ? 0.14 : risk === 'Conservative' ? 0.09 : 0.12;
+          case 'GBP':
+            return risk === 'Aggressive' ? 0.108 : risk === 'Conservative' ? 0.068 : 0.088;
+          case 'AED':
+            return risk === 'Aggressive' ? 0.112 : risk === 'Conservative' ? 0.072 : 0.092;
+          case 'AUD':
+            return risk === 'Aggressive' ? 0.115 : risk === 'Conservative' ? 0.072 : 0.092;
+          case 'USD':
+          default:
+            return risk === 'Aggressive' ? 0.118 : risk === 'Conservative' ? 0.078 : 0.098;
+        }
+      }
+    } else {
+      switch (pCurrency) {
+        case 'INR':
+          return risk === 'Aggressive' ? 0.152 : risk === 'Conservative' ? 0.11 : 0.135;
+        case 'GBP':
+          return risk === 'Aggressive' ? 0.118 : risk === 'Conservative' ? 0.078 : 0.098;
+        case 'AED':
+          return risk === 'Aggressive' ? 0.122 : risk === 'Conservative' ? 0.082 : 0.102;
+        case 'AUD':
+          return risk === 'Aggressive' ? 0.125 : risk === 'Conservative' ? 0.082 : 0.102;
+        case 'USD':
+        default:
+          return risk === 'Aggressive' ? 0.128 : risk === 'Conservative' ? 0.088 : 0.108;
+      }
+    }
+  };
+
+  const getTaxMechanism = () => {
+    switch (pCurrency) {
+      case 'INR':
+        return {
+          title: "4. ELSS (Equity Linked Savings Scheme) / Tax Saver",
+          desc: "The Tax-Saving mechanism. A special category of diversified mutual funds in India that allows you to claim tax deductions under Section 80C.",
+          why: "Provides dual benefits of wealth compounding via equity exposure plus tax deductions, with a mandatory 3-year lock-in that enforces long-term discipline."
+        };
+      case 'USD':
+        return {
+          title: "4. Roth IRA / 401(k) (Tax-Advantaged Accounts)",
+          desc: "The Tax-Sheltered mechanism. US accounts that allow post-tax investments for tax-free growth (Roth) or pre-tax investments to reduce taxable income (401k).",
+          why: "Eliminates capital gains tax entirely on retirement withdrawals and leverages employer matches (401k) to boost compound gains."
+        };
+      case 'GBP':
+        return {
+          title: "4. ISA (Individual Savings Account) & SIPPs",
+          desc: "The UK Tax Shield. Investment wrappers allowing you to save up to £20,000 annually entirely immune from income or capital gains tax.",
+          why: "Protects monthly index compounding from HMRC tax brackets, serving as a critical tax shelter for early drawdowns."
+        };
+      case 'AED':
+        return {
+          title: "4. Offshore Tax-Free Investment Vehicles",
+          desc: "The Tax-Haven optimization. Since UAE features 0% income tax, this represents global index ETFs held in tax-efficient international brokerage structures.",
+          why: "Ensures expats maintain frictionless tax-free compounding and smooth global repatriation of funds."
+        };
+      default:
+        return {
+          title: "4. Tax-Advantaged Retirement Savings Accounts",
+          desc: "The global Tax Optimizer. General tax-deferred or tax-exempt retirement plans offered by your country of residence.",
+          why: "Minimizes tax drag on compounding dividends and capital gains, ensuring your corpus grows significantly faster."
+        };
+    }
+  };
+
+  const getDynamicCoachSummary = () => {
+    let summary = roadmap?.coach_summary || '';
+    if (!summary) return '';
+    
+    // Replace default 10% step-up references with selected stepUpRate
+    summary = summary.replace(/\b10\s*%/g, `${stepUpRate}%`);
+    
+    // Replace the original corpus values with the dynamic compound corpus
+    const originalCorpusAmt = roadmap?.projected_corpus || 0;
+    if (originalCorpusAmt > 0) {
+      const origFormatted = fmtCurrency(originalCorpusAmt);
+      const newFormatted = fmtCurrency(mathCorpus);
+      if (summary.includes(origFormatted)) {
+        summary = summary.split(origFormatted).join(newFormatted);
+      }
+    }
+    return summary;
+  };
+
+  const equity = getDynamicCAGR();
   const cagrLabel = `${(equity * 100).toFixed(1).replace(/\.0$/, '')}%`;
   const years = Math.min(30, Math.max(1, retireAge - age)); // Cap at 30 years max
 
@@ -183,10 +351,7 @@ export default function Dashboard() {
   // Dynamic investments based on skipLowReturn selection
   const baseInvestments = roadmap?.investments || [];
   const displayedInvestments = (allocationMode === 'split' && skipLowReturn)
-    ? [
-        { category: "Mid Cap & Flexi Cap Mutual Funds", percentage: 55, details: "Parag Parikh Flexi Cap Fund (Growth, 14-16% CAGR)" },
-        { category: "Small Cap Mutual Funds", percentage: 45, details: "Nippon India Small Cap Fund (High volatility growth, 18-20% CAGR)" }
-      ]
+    ? getOptimizedInvestments()
     : baseInvestments;
 
   return (
@@ -399,7 +564,7 @@ export default function Dashboard() {
             </span>
           </div>
           <p className="text-base leading-relaxed text-white font-sans italic"
-            dangerouslySetInnerHTML={{ __html: highlightCurrency((roadmap?.coach_summary||'').replace(/^["'“]+|["'”]+$/g,''), true) }} />
+            dangerouslySetInnerHTML={{ __html: highlightCurrency((getDynamicCoachSummary()||'').replace(/^["'“]+|["'”]+$/g,''), true) }} />
           <p className="text-xs text-[#8C9A84] mt-5 pt-5 border-t border-white/10 font-sans">
             Coach advice combines structural math, safe drawdown theory, and inflation indexing for 2026.
           </p>
@@ -465,7 +630,7 @@ export default function Dashboard() {
                 data={
                   allocationMode === 'split' 
                     ? displayedInvestments 
-                    : [{ category: 'Parag Parikh Flexi Cap Fund', percentage: 100 }]
+                    : [{ category: getSingleFund().name, percentage: 100 }]
                 } 
               />
             </div>
@@ -519,11 +684,11 @@ export default function Dashboard() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-bold text-[#2D3A31]">Parag Parikh Flexi Cap Fund</span>
+                        <span className="text-xs font-bold text-[#2D3A31]">{getSingleFund().name}</span>
                         <span className="text-xs font-mono font-bold bg-[#8C9A84] text-white px-2 py-0.5 rounded-full">100%</span>
                       </div>
                       <p className="text-[11px] text-[#8C9A84] leading-relaxed italic font-serif">
-                        Direct Growth Plan (~15.2% 5-year CAGR). Diversified across large stalwarts, mid-caps, and international equities.
+                        {getSingleFund().details}
                       </p>
                     </div>
                   </div>
@@ -557,7 +722,7 @@ export default function Dashboard() {
                               : (risk === 'Aggressive' ? '14%' : risk === 'Conservative' ? '9%' : '12%')}
                           </td>
                           <td className="py-1.5 text-right font-bold text-[#8C9A84]">
-                            {risk === 'Aggressive' ? '15.2%' : risk === 'Conservative' ? '11%' : '13.5%'}
+                            {getSingleFundCAGR()}
                           </td>
                         </tr>
                         <tr>
@@ -623,6 +788,17 @@ export default function Dashboard() {
                   "Never attempt systematic SIPs on land. Real estate is highly illiquid, capital-intensive, and carries high entry/exit friction. Accumulate a liquid, compounding equity corpus first. Once established, deploy lump sums into tangible land holdings."
                 </p>
               </div>
+
+              <div className="p-3 bg-[#F9F8F4] border border-[#E6E2DA] rounded-2xl">
+                <h5 className="font-bold text-[#2D3A31] mb-1 flex items-center gap-1.5">⚖️ Tax Saving with Existing Loans</h5>
+                <p className="text-[#8C9A84] leading-relaxed">
+                  {pCurrency === 'INR' ? (
+                    "If you have a Home Loan, leverage Section 24(b) to deduct up to ₹2 Lakhs on interest, and Section 80C for principal repayment. For Education Loans, claim unlimited interest deductions under Section 80E. Check if these loan benefits already fill your tax exemption quotas before locking extra cash into ELSS."
+                  ) : (
+                    "Prioritize tax deductions on loan interest. In many regions, home mortgage interest and student loan interest payments are tax-deductible. Ensure you claim these existing exemptions before committing additional surplus to voluntary retirement funds."
+                  )}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -673,7 +849,7 @@ export default function Dashboard() {
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="flex flex-col gap-6">
-              <h4 className="section-label pb-2 border-b border-[#E6E2DA]">The 3 Systematic Mechanisms (The How)</h4>
+              <h4 className="section-label pb-2 border-b border-[#E6E2DA]">The 4 Systematic & Tax Mechanisms (The How)</h4>
               
               <div className="flex flex-col gap-4 text-xs">
                 <div>
@@ -703,6 +879,16 @@ export default function Dashboard() {
                   </p>
                   <p className="text-[#8C9A84] mt-1 leading-relaxed">
                     <strong>Why use it:</strong> Protects large lump sums from sudden market crashes while gradually deploying capital into index equities.
+                  </p>
+                </div>
+
+                <div>
+                  <h5 className="font-bold text-[#2D3A31] mb-1">{getTaxMechanism().title}</h5>
+                  <p className="text-[#8C9A84] leading-relaxed">
+                    <strong>What it is:</strong> {getTaxMechanism().desc}
+                  </p>
+                  <p className="text-[#8C9A84] mt-1 leading-relaxed">
+                    <strong>Why use it:</strong> {getTaxMechanism().why}
                   </p>
                 </div>
               </div>
