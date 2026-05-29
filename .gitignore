@@ -24,6 +24,3 @@ build/
 .DS_Store
 Thumbs.db
 
-# Presentation Files
-*.pptx
-generate_ppt.py
